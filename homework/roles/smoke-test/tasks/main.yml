@@ -1,0 +1,26 @@
+---
+# tasks file for check
+- name: OpenStack servers
+  os_server_facts:
+    cloud: ospcloud
+    server: frontend
+  tags:
+    - smoke-test
+
+- name: Curl website
+  uri:
+    url: "http://{{item.accessIPv4}}"
+    return_content: yes
+  with_items:
+    - "{{ openstack_servers}}"
+  register: webpage  
+  tags:
+    - smoke-test
+
+- name: Fail if Status Code is not 200
+  fail:
+  when: item.status != 200
+  with_items: 
+  - "{{ webpage.results}}"
+  tags:
+  - smoke-test

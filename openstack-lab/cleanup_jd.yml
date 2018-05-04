@@ -1,0 +1,18 @@
+# Reverse 3 Tier app deployment
+#
+#   Remove all repos
+#   Remove the base 3 tier app packages (haproxy, tomcat etc)
+
+- name: Configure 3tier app on OSP
+  hosts: jumpbox
+  roles:
+   - { role: osp.facts }
+  tags:
+    - osp.facts
+
+- name: cleanup
+  hosts: all
+  gather_facts: false
+  become: true
+  roles:
+    - cleaner

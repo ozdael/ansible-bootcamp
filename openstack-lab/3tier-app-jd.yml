@@ -1,0 +1,35 @@
+---
+- name: Configure 3tier app on OSP
+  hosts: jumpbox
+  roles:
+   - { role: osp.facts }
+  tags:
+    - osp.facts
+
+- name: configure loadbalancer
+  hosts: frontend
+  gather_facts: false
+  become: yes
+  roles:
+    - config
+    - lb
+
+- name: configure application
+  hosts: apps
+  become: yes 
+  roles:
+    - config
+    - app
+
+- name: configure database
+  hosts: appdbs
+  roles:
+    - config
+    - role: geerlingguy.postgresql
+      become: yes
+
+- name: test application
+  hosts: frontend
+  roles:
+    - { role: test, tags: test_appl }
+

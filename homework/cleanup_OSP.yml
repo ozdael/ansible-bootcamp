@@ -1,0 +1,5 @@
+---
+# Destroy OSP instances and floating IP's (public IP's)
+- hosts: jumpbox
+  roles:       
+    - osp.cleanup
