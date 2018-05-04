@@ -1,0 +1,14 @@
+- name: populate motd
+  hosts: all
+  user: devops
+  become: true
+  vars:
+    system_owner: clyde@example.com
+  tasks:
+  - name: copy the template for motd
+    template:
+      src: motd.j2
+      dest: /etc/motd
+      owner: root
+      group: root
+      mode: 0644

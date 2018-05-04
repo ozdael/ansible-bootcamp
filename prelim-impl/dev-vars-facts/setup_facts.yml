@@ -1,0 +1,18 @@
+- name: setup custom facts
+  hosts: webserver
+  become: true
+  vars:
+    custom_fact_dir: /etc/ansible/facts.d
+  tasks:
+  - name: create facts directory
+    file:
+      state: directory
+      path: "{{ custom_fact_dir }}"
+      owner: student
+      group: student
+      mode: 0644
+       
+  - name: copy facts file to facts directory
+    copy:
+      src: custom.fact
+      dest: "{{ custom_fact_dir }}"

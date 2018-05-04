@@ -1,0 +1,16 @@
+---
+- name: Demonstrate environment variable in block
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: true
+  vars:
+    myname: ansible
+  tasks:
+  - block:
+    - name: Print variable
+      shell: "echo $name"
+      register: result
+    - debug: var=result.stdout
+    environment:
+      name: "{{ myname }}"

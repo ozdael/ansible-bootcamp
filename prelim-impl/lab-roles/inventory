@@ -1,0 +1,4 @@
+[managed_hosts]
+serverb.lab.example.com
+tower.lab.example.com
+localhost
