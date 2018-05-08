@@ -1,0 +1,36 @@
+---
+# Create in-memory inventory of Openstack servers for 3 tier app
+- hosts: jumpbox
+  gather_facts: false
+  roles:
+    - { role: osp-facts, when: ansible_product_name ==  'OpenStack Compute'}
+
+# Configure loadbalancer tier for frontends
+- name: configure loadbalancer 
+  hosts: frontends
+  gather_facts: false
+  roles:
+    - { role: base-config, tags: config }
+    - { role: loadbalancer, tags: lb }
+
+# Configure application servers tier
+- name: configure application
+  hosts: apps
+  roles:
+    - { role: base-config, tags: config }
+    - { role: appl-servers, tags: appl }
+
+# Setup database tier
+- name: configure database
+  hosts: appdbs
+  roles:
+    - { role: base-config, tags: config }
+    - { role: geerlingguy.postgresql, tags: db }
+
+# Run smoke test for 3tier application
+- name: test application
+  hosts: frontends
+  gather_facts: false
+  roles:
+    - { role: smoke-test, tags: test }
+

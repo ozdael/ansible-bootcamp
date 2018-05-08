@@ -1,0 +1,39 @@
+---
+# Set up public/private key pairs to protect the instance at launch time
+# Public/private key pairs work by keeping the public key on the instance and the private key on your local workstation
+- name: Create ssh key /root/openstack.pub for user "{{ ansible_env.USER }}"
+  user:
+    name: "{{ ansible_env.USER }}"
+    generate_ssh_key: yes
+    ssh_key_file: /root/openstack.pub
+
+- name: Add a keypair to openstack with the public key of user "{{ ansible_env.USER }}"
+  os_keypair:
+    cloud: ospcloud
+    state: present
+    name: ansible_ssh
+    public_key_file: "{{ ansible_env.HOME }}/.ssh/id_rsa.pub"
+  register: key
+  ignore_errors: True
+  tags:
+    - keypair
+
+# This block runs only if the previous task failed and forces the creation of a new keypair
+- block:
+  - name: Delete previous keypair (adding key failed or wrong key hash)
+    os_keypair:
+        cloud: ospcloud
+        name: ansible_ssh
+        public_key_file: "{{ ansible_env.HOME }}/.ssh/id_rsa.pub"
+        state: absent
+
+  - name: Add a keypair to openstack with the public key of user "{{ ansible_env.USER }}"
+    os_keypair:
+        cloud: ospcloud
+        state: present
+        name: ansible_ssh
+        public_key_file: "{{ ansible_env.HOME }}/.ssh/id_rsa.pub"
+    register: key
+  when:
+    - key.failed
+    - '"present but key hash not the same as offered. Delete key first." in key.msg'

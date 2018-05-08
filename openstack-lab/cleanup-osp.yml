@@ -1,0 +1,6 @@
+- name: Remove OpenStack instances
+  hosts: all
+  gather_facts: false
+  become: true
+  roles:
+    - osp-cleanup

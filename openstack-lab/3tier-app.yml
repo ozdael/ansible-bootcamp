@@ -1,0 +1,40 @@
+---
+# Create in-memory inventory of Openstack servers for 3 tier app
+- name: Create in-memory inventory for OpenStack servers
+  hosts: jumpbox
+  gather_facts: false
+  roles:
+    - { role: osp-facts, tags: osp-facts }
+
+# Configure loadbalancer tier for frontends
+- name: Configure loadbalancer 
+  hosts: frontends
+  become: yes
+  gather_facts: false
+  roles:
+    - { role: base-config, tags: config }
+    - { role: loadbalancer, tags: lb }
+
+# Configure application servers tier
+- name: Configure application
+  hosts: apps
+  become: yes
+  roles:
+    - { role: base-config, tags: config }
+    - { role: appl-servers, tags: appl }
+
+# Setup database tier
+- name: Configure database
+  hosts: appdbs
+  become: yes
+  roles:
+    - { role: base-config, tags: config }
+    - { role: geerlingguy.postgresql, tags: db }
+
+# Run smoke test for 3tier application
+- name: Test application on Openstack instances
+  hosts: frontends
+  gather_facts: false
+  roles:
+    - { role: smoke-test, tags: test }
+

@@ -1,0 +1,11 @@
+---
+# A flavor defines the compute, memory, and storage capacity of a Nova node
+# Create the flavors below
+- name: Create m2.small flavor
+  os_nova_flavor:
+    cloud: ospcloud
+    state: present
+    name: m2.small
+    ram: 2048
+    vcpus: 1
+    disk: 10

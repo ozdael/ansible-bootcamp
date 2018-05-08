@@ -1,0 +1,14 @@
+---
+- name: Enable repo for 3tier app
+  template:
+    src: open_three-tier-app.repo
+    dest: /etc/yum.repos.d/open_three-tier-app.repo
+    mode: 0644
+
+- name: Enabling of sudo without tty for some ansible commands
+  replace:
+    path: /etc/sudoers
+    regexp: '^Defaults requiretty'
+    replace: 'Defaults\s*!requiretty'
+    backup: yes
+

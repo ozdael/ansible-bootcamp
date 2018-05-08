@@ -1,33 +1,28 @@
 ---
-- name: reverse the enabling of sudo without tty for some ansible commands
-  replace:
-    path: /etc/sudoers
-    regexp: 'Defaults\s*!requiretty'
-    replace: '^Defaults requiretty'
-    backup: yes
+# name: Reverse the enabling of sudo without tty for some ansible commands
+# replace:
+#   path: /etc/sudoers
+#   regexp: 'Defaults\s*!requiretty'
+#   replace: '^Defaults requiretty'
+#   backup: yes
 
 - name: Remove repo file
   file:
     state: absent
     path: /etc/yum.repos.d/open_three-tier-app.repo
 
-- name: remove base tools and three tier app packages
+- name: Remove base tools and three tier app packages
   yum:
     name: "{{ item }}"
     state: absent
   with_items:
-    - httpie
-    - python-pip
+#   - httpie
+#   - python-pip
     - haproxy
     - tomcat
     - postgresql-server
 
-#- name: Copy placeholder index.html
-# template:
-#    src: /dev/null
-#    dest: /tmp/index.html
-
 - name: Remove index.html
   file:
+    path: "{{ tomcat_webapps_root }}/index.html"
     state: absent
-    path: /tmp/index.html

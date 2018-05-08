@@ -1,0 +1,14 @@
+---
+# Use Jumpbox to provision OpenStack
+- name: Provision Openstack
+  hosts: jumpbox
+  roles:
+    - { role: osp-network, tags: network }
+    - { role: osp-keypair, tags: keypair }
+    - { role: osp-securitygroup, tags: security }
+    - { role: osp-flavor, tags: flavor }
+    - { role: osp-instances, vars_from: frontend.yaml, tags: instances }
+    - { role: osp-instances, vars_from: app1.yaml, tags: instances }
+    - { role: osp-instances, vars_from: app2.yaml, tags: instances }
+    - { role: osp-instances, vars_from: db.yaml, tags: instances }
+

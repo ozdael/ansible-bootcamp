@@ -1,0 +1,11 @@
+---
+- name: check loadbalancer for expected response
+  uri:
+    url:  http://frontend1.{{ GUID }}.example.opentlc.com
+    return_content: yes
+  register: result
+  until: '"Tomcat on app" in result.content'
+  retries: 10
+  delay: 1
+  tags:
+    - test
