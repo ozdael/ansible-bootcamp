@@ -1,30 +1,14 @@
 ---
-# Initial, common, system setup steps
-
-- name: enable sudo without tty for some ansible commands
-  replace:
-    path: /etc/sudoers
-    regexp: '^Defaults\s*requiretty'
-    replace: 'Defaults  !requiretty'
-    backup: yes
-  tags:
-    - base-config
-
-- name: enable repos
+- name: Enable repo for 3tier app
   template:
-    src: repos_template.j2
+    src: open_three-tier-app.repo
     dest: /etc/yum.repos.d/open_three-tier-app.repo
     mode: 0644
-  tags:
-    - base-config
 
-- name: install base tools and packages
-  yum:
-    name: "{{ item }}" 
-    state: latest
-  with_items:
-    - httpie
-    - python-pip
-  tags:
-    - base-config
+- name: Enabling of sudo without tty for some ansible commands
+  replace:
+    path: /etc/sudoers
+    regexp: '^Defaults requiretty'
+    replace: 'Defaults\s*!requiretty'
+    backup: yes
 

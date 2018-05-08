@@ -1,26 +1,30 @@
 ---
-# tasks file for check
-- name: OpenStack servers
+# Run smoke test for 3 tier app on OpenStack instances
+- name: Fetch instance info for Openstack frontend instances
   os_server_facts:
     cloud: ospcloud
     server: frontend
-  tags:
-    - smoke-test
+  register: result
+  when: ansible_product_name == 'OpenStack Compute'
 
-- name: Curl website
+- name: Check loadbalancer instances on Openstack instances
   uri:
     url: "http://{{item.accessIPv4}}"
     return_content: yes
-  with_items:
-    - "{{ openstack_servers}}"
-  register: webpage  
-  tags:
-    - smoke-test
+  with_items: "{{result.ansible_facts.openstack_servers}}"
+  when: ansible_product_name == 'OpenStack Compute'
+  register: result
+  until: '"Tomcat on app" in result.content'
+  retries: 10
+  delay: 1
 
-- name: Fail if Status Code is not 200
-  fail:
-  when: item.status != 200
-  with_items: 
-  - "{{ webpage.results}}"
-  tags:
-  - smoke-test
+# todo: add AWS ansible_product_name for 'normal' and prod instance homework?
+- name: Check loadbalancer instances            
+  uri:
+    url:  http://frontend1.{{ GUID }}.example.opentlc.com
+    return_content: yes
+  register: result
+  until: '"Tomcat on app" in result.content'
+  retries: 10
+  delay: 1
+

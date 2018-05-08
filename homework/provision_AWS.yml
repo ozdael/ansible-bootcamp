@@ -1,47 +1,16 @@
 ---
-- name: Configure 3teir on OSP
+# Use Jumpbox to provision AWS for production instances
+- name: Provision Openstack
   hosts: jumpbox
   roles:
-   - { role: osp.facts }
-  tags:
-    - osp.facts
+    - { role: osp-network, tags: network }
+    - { role: osp-keypair, tags: keypair }
+    - { role: osp-securitygroup, tags: security }
+    - { role: osp-flavor, tags: flavor }
 
+  tasks:
+  - name: Create frontend instance
+    include_role:
+       name: osp-instances
+       vars_from: frontend.yml
 
-- name: Setup RedHat Repositories
-  hosts: all
-  roles:
-   - { role: repo-config }
-  tags:
-    - setup-repos
-
-- name: Setup HAProxy
-  hosts: frontends
-  roles:
-   - { role: haproxy }
-  tags:
-    - setup-haproxy
-
-- name: Setup HTTP and Tomcat
-  hosts: apps
-  # gather_facts: false
-  roles:
-   - { role: http-tomcat }
-  tags:
-    - setup-tomcat
-
-- name: Setup application1 
-  hosts: apps
-  roles:
-   - { role: application1 }
-
-- name: Setup application2 
-  hosts: apps
-  roles:
-   - { role: application2 }
-
-- name: Setup postgresql
-  hosts: appdbs
-  roles:
-   - { role: postgresql }
-  tags:
-    - setup-postgresql
