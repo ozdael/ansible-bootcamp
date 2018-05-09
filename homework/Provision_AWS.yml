@@ -2,6 +2,7 @@
 - name: Provision AWS stack for 3tier app production
   hosts: localhost
   become: yes
+  become_method: sudo
   tasks:
   - shell: source /root/credential.rc
   - command: /root/order_svc.sh -c 'OPENTLC Automation' -i 'Three Tier Application' -t 1 -y
