@@ -1,16 +1,6 @@
 ---
-# Use Jumpbox to provision AWS for production instances
-- name: Provision Openstack
-  hosts: jumpbox
-  roles:
-    - { role: osp-network, tags: network }
-    - { role: osp-keypair, tags: keypair }
-    - { role: osp-securitygroup, tags: security }
-    - { role: osp-flavor, tags: flavor }
-
+- name: Provision AWS stack for 3tier app production
+  hosts: localhost
   tasks:
-  - name: Create frontend instance
-    include_role:
-       name: osp-instances
-       vars_from: frontend.yml
-
+  - shell: source /root/credential.rc
+  - command: /root/order_svc.sh -c 'OPENTLC Automation' -i 'Three Tier Application' -t 1 -y
