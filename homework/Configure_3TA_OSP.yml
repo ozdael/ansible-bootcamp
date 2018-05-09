@@ -1,10 +1,17 @@
 ---
 # Create in-memory inventory of Openstack servers for 3 tier app
 - name: Create in-memory inventory for OpenStack servers
-  hosts: jumpbox
+  hosts: localhost
   gather_facts: false
   roles:
     - { role: osp-facts, tags: osp-facts }
+
+# Create in-memory inventory of AWS servers for 3 tier app
+- name: Create in-memory inventory for AWS servers
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - { role: aws-facts, tags: aws-facts }
 
 # Configure loadbalancer tier for frontends
 - name: Configure loadbalancer 
